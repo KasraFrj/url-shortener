@@ -30,5 +30,5 @@
 
 ### ۱. کلون کردن پروژه
 ```bash
-git clone [https://github.com/KasraFrj/url_shortener.git](https://github.com/KasraFrj/url_shortener.git)
+git clone [https://github.com/KasraFrj/url-shortener.git](https://github.com/KasraFrj/url-shortener.git)
 cd url_shortener
