@@ -1,113 +1,34 @@
-# 🔗 URL Shortener API
+# 🚀 URL Shortener with FastAPI, PostgreSQL, and Redis
 
-A fast and lightweight URL shortening service built with **FastAPI**, **PostgreSQL**, and **Redis** caching.
-
----
-
-## ✨ Features
-
-- 🔗 **URL Shortening** — Convert long URLs into 6-character short codes
-- ⚡ **Redis Caching** — Frequently accessed URLs are cached for faster redirects
-- 📊 **Click Tracking** — Track how many times each short link has been clicked
-- 📄 **Auto Documentation** — Interactive Swagger UI at `/docs`
+یک سیستم پیشرفته و پرسرعت کوتاه‌کننده لینک (URL Shortener) که با **FastAPI** توسعه یافته و برای افزایش کارایی و سرعت از **Redis** به عنوان لایه Cache و از **PostgreSQL** به عنوان دیتابیس اصلی استفاده می‌کند. کل این اکوسیستم به صورت کاملاً ایزوله با **Docker** و **Docker Compose** ارکستره شده است.
 
 ---
 
-## 🛠 Tech Stack
+## 🛠️ تکنولوژی‌های استفاده شده
 
-| Layer | Technology |
-|---|---|
-| Framework | FastAPI |
-| Database | PostgreSQL |
-| ORM | SQLAlchemy |
-| Cache | Redis |
-| Server | Uvicorn |
+* **Backend Framework:** FastAPI (Python 3.11)
+* **Database:** PostgreSQL
+* **Caching Layer:** Redis (Alpine-backed)
+* **ORM:** SQLAlchemy
+* **Containerization:** Docker & Docker Compose
 
 ---
 
-## 📁 Project Structure
+## 🏗️ معماری و نحوه کارکرد (Workflow)
 
-```
-url-shortener/
-├── app/
-│   ├── main.py          # App entry point & routes
-│   ├── database.py      # DB connection & session
-│   ├── models.py        # SQLAlchemy models
-│   ├── schemas.py       # Pydantic schemas
-│   ├── crud.py          # Database & cache operations
-│   └── redis_client.py  # Redis connection
-├── requirements.txt
-└── .env
-```
+1. **ذخیره‌سازی لینک:** آدرس طولانی ارسال می‌شود، سیستم یک کد ۶ رقمی رندوم و منحصربه‌فرد تولید کرده و آن را در PostgreSQL ذخیره می‌کند.
+2. **سیستم کشینگ (Cache):** هنگام درخواست ریدایرکت، سیستم ابتدا **Redis** را چک می‌کند:
+   * **Cache Hit:** اگر لینک در ردیس باشد، بدون درگیر کردن دیتابیس اصلی، کاربر فوراً ریدایرکت می‌شود.
+   * **Cache Miss:** اگر لینک در ردیس نباشد، از PostgreSQL خوانده شده، در ردیس کَش می‌شود (با TTL یک ساعته) و سپس ریدایرکت انجام می‌شود.
+3. **آمار کلیک‌ها:** در هر بار ریدایرکت، یک واحد به تعداد `clicks` آن لینک در دیتابیس افزوده می‌شود.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 راه اندازی پروژه با داکر (Quick Start)
 
-### Prerequisites
+هر کجای دنیا که هستید، بدون نیاز به نصب پایتون، پستگرس یا ردیس روی سیستم خود، می‌توانید پروژه را تنها با چند دستور ساده بالا بیاورید:
 
-- Python 3.10+
-- PostgreSQL
-- Redis
-
-### Installation
-
+### ۱. کلون کردن پروژه
 ```bash
-# 1. Clone the repository
-git clone https://github.com/KasraFrj/url-shortener.git
-cd url-shortener
-
-# 2. Create and activate a virtual environment
-python -m venv venv
-venv\Scripts\activate  # On Linux/Mac: source venv/bin/activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-```
-
-### Configuration
-
-Create a `.env` file in the root directory:
-
-```env
-DATABASE_URL=postgresql://postgres:your_password@localhost:5432/url_shortener
-REDIS_HOST=localhost
-REDIS_PORT=6379
-```
-
-### Run the Application
-
-```bash
-uvicorn app.main:app --reload
-```
-
-The API will be available at `http://localhost:8000`
-
----
-
-## 📖 API Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/shorten` | Create a short URL |
-| GET | `/{short_code}` | Redirect to original URL |
-| GET | `/stats/{short_code}` | Get click stats for a short URL |
-
-> 📝 Full interactive documentation available at `http://localhost:8000/docs`
-
----
-
-## ⚡ How Caching Works
-
-When a short URL is accessed for the first time, the original URL is fetched from PostgreSQL and stored in Redis with a **1-hour expiry**. Subsequent requests are served directly from Redis, making redirects significantly faster.
-
-```
-Request → Check Redis → Hit? → Redirect (fast)
-                      → Miss? → Query PostgreSQL → Cache in Redis → Redirect
-```
-
----
-
-## 📬 Contact
-
-**Kasra** — [@KasraFrj](https://github.com/KasraFrj)
+git clone [https://github.com/KasraFrj/url_shortener.git](https://github.com/KasraFrj/url_shortener.git)
+cd url_shortener
