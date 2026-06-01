@@ -14,7 +14,7 @@ def create_short_url(db : Session , orginal_url : str):
     while db.query(models.URL).filter(models.URL.short_code == short_code).first():
         short_code = generate_short_code()
 
-    db_url = models.URL(original_url = orginal_url , short_code = short_code)
+    db_url = models.URL(orginal_url = orginal_url , short_code = short_code)
     db.add(db_url)
     db.commit()
     db.refresh(db_url)
@@ -27,9 +27,9 @@ def get_url_by_code(db: Session, short_code: str):
     
     db_url = db.query(models.URL).filter(models.URL.short_code == short_code).first()
     if db_url:
-        redis_client.setex(f"url:{short_code}", 3600, db_url.original_url)
+        redis_client.setex(f"url:{short_code}", 3600, db_url.orginal_url)
         db_url.clicks += 1
         db.commit()
-        return db_url.original_url
+        return db_url.orginal_url
     
     return None
